@@ -4,15 +4,16 @@ import { DEFAULT_PAGE_SIZE, DEFAULT_SKIP } from 'src/constants/constant';
 import { PaginationDto } from 'src/global-dto/pagination.dto';
 import { Repository } from 'typeorm';
 import { Post } from './entity/post.entity';
-// import { CreatePostDto } from './dto/create-post.dto';
-// import { UpdatePostDto } from './dto/update-post.dto';
+import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 
 @Injectable()
 export class PostService {
   constructor(@InjectRepository(Post) private postRepo: Repository<Post>) {}
-  // create(createPostDto: CreatePostDto) {
-  //   return 'This action adds a new post';
-  // }
+  create(createPostDto: CreatePostDto) {
+    const post = this.postRepo.create(createPostDto);
+    return this.postRepo.save(post);
+  }
 
   findAll(paginationDto: PaginationDto) {
     return (
@@ -49,9 +50,9 @@ export class PostService {
     });
   }
 
-  // update(id: number, updatePostDto: UpdatePostDto) {
-  //   return `This action updates a #${id} post`;
-  // }
+  update(id: number, updatePostDto: UpdatePostDto) {
+    return this.postRepo.update(id, updatePostDto);
+  }
 
   remove(id: number) {
     return this.postRepo.delete(id);

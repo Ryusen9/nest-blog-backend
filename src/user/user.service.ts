@@ -19,7 +19,14 @@ export class UserService {
   }
 
   findOne(id: number) {
-    return this.userRepo.findOneBy({ id });
+    return this.userRepo.findOne({
+      where: { id },
+      relations: {
+        posts: true,
+        likes: true,
+        comments: true,
+      },
+    });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
