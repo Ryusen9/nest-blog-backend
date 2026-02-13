@@ -9,10 +9,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Tag } from './tag.entity';
-import { Like } from './like.entity';
-import { Comment } from './comment.entity';
-import { User } from './user.entity';
+import { User } from 'src/user/entity/user.entity';
+import { Like } from 'src/like/entity/like.entity';
+import { Comment } from 'src/comment/entity/comment.entity';
+import { Tag } from 'src/tag/entity/tag.entity';
 
 @Entity()
 export class Post {

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like } from 'src/entities/like.entity';
 import { Repository } from 'typeorm';
+import { Like } from './entity/like.entity';
 // import { CreateLikeDto } from './dto/create-like.dto';
 // import { UpdateLikeDto } from './dto/update-like.dto';
 
@@ -25,6 +25,6 @@ export class LikeService {
   // }
 
   remove(id: number) {
-    return `This action removes a #${id} like`;
+    return this.likeRepo.delete(id);
   }
 }

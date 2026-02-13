@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DEFAULT_PAGE_SIZE, DEFAULT_SKIP } from 'src/constants/constant';
-import { Post } from 'src/entities/post.entity';
 import { PaginationDto } from 'src/global-dto/pagination.dto';
 import { Repository } from 'typeorm';
+import { Post } from './entity/post.entity';
 // import { CreatePostDto } from './dto/create-post.dto';
 // import { UpdatePostDto } from './dto/update-post.dto';
 
@@ -54,6 +54,6 @@ export class PostService {
   // }
 
   remove(id: number) {
-    return `This action removes a #${id} post`;
+    return this.postRepo.delete(id);
   }
 }

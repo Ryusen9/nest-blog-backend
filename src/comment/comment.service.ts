@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Comment } from 'src/entities/comment.entity';
 import { Repository } from 'typeorm';
+import { Comment } from './entity/comment.entity';
 // import { CreateCommentDto } from './dto/create-comment.dto';
 // import { UpdateCommentDto } from './dto/update-comment.dto';
 
@@ -27,6 +27,6 @@ export class CommentService {
   // }
 
   remove(id: number) {
-    return `This action removes a #${id} comment`;
+    return this.commentRepo.delete(id);
   }
 }

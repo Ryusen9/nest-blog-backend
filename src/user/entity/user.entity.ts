@@ -7,10 +7,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Post } from './post.entity';
-import { Like } from './like.entity';
-import { Comment } from './comment.entity';
 import * as bcrypt from 'bcrypt';
+import { Post } from 'src/post/entity/post.entity';
+import { Like } from 'src/like/entity/like.entity';
+import { Comment } from 'src/comment/entity/comment.entity';
 
 @Entity()
 export class User {

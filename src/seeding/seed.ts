@@ -2,11 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { DataSource } from 'typeorm';
 import { faker } from '@faker-js/faker';
 import { AppModule } from '../app.module';
-import { User } from '../entities/user.entity';
-import { Post } from '../entities/post.entity';
-import { Tag } from '../entities/tag.entity';
-import { Comment } from '../entities/comment.entity';
-import { Like } from '../entities/like.entity';
+import { Tag } from 'src/tag/entity/tag.entity';
+import { User } from 'src/user/entity/user.entity';
+import { Post } from 'src/post/entity/post.entity';
+import { Comment } from 'src/comment/entity/comment.entity';
+import { Like } from 'src/like/entity/like.entity';
 
 const TOTAL_USERS = 20;
 const TOTAL_POSTS = 70;
