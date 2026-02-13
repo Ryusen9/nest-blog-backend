@@ -4,10 +4,19 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entity/user.entity';
+import { compare } from 'bcrypt';
 
 @Injectable()
 export class UserService {
   constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
+
+  async comparePasswords(plainText: string, hashed: string): Promise<boolean> {
+    const comparePasswordsFn = compare as (
+      data: string | Buffer,
+      encrypted: string,
+    ) => Promise<boolean>;
+    return comparePasswordsFn(plainText, hashed);
+  }
 
   async create(createUserDto: CreateUserDto) {
     const user = this.userRepo.create(createUserDto);
@@ -27,6 +36,10 @@ export class UserService {
         comments: true,
       },
     });
+  }
+
+  findByEmail(email: string) {
+    return this.userRepo.findOne({ where: { email } });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

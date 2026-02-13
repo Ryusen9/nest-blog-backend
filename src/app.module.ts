@@ -9,6 +9,7 @@ import { TagModule } from './tag/tag.module';
 import { LikeModule } from './like/like.module';
 import { CommentModule } from './comment/comment.module';
 import path from 'path';
+import { AuthModule } from './auth_main/auth.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import path from 'path';
     TagModule,
     LikeModule,
     CommentModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
