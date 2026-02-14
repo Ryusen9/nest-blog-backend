@@ -10,7 +10,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  const port = Number(process.env.MAIN_PORT);
+  const port = Number(process.env.MAIN_PORT ?? 3000);
   await app.listen(port);
 }
 bootstrap();
