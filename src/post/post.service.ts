@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { Post } from './entity/post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { PostQueryDto } from './dto/query.dto';
 
 @Injectable()
 export class PostService {
@@ -15,27 +16,30 @@ export class PostService {
     return this.postRepo.save(post);
   }
 
-  findAll(paginationDto: PaginationDto) {
-    return (
-      this.postRepo
-        .createQueryBuilder('post')
-        .leftJoin('post.user', 'user')
-        .leftJoinAndSelect('post.tags', 'tag')
+  findAll(paginationDto: PaginationDto, queryDto?: PostQueryDto) {
+    const query = this.postRepo
+      .createQueryBuilder('post')
+      .leftJoin('post.user', 'user')
+      .leftJoinAndSelect('post.tags', 'tag')
 
-        // Count likes instead of loading them
-        .loadRelationCountAndMap('post.likesCount', 'post.likes')
+      // Count likes instead of loading them
+      .loadRelationCountAndMap('post.likesCount', 'post.likes')
 
-        // Count comments instead of loading them
-        .loadRelationCountAndMap('post.commentsCount', 'post.comments')
+      // Count comments instead of loading them
+      .loadRelationCountAndMap('post.commentsCount', 'post.comments')
 
-        // Select only needed user fields
-        .select(['post', 'tag', 'user.id', 'user.email'])
+      // Select only needed user fields
+      .select(['post', 'tag', 'user.id', 'user.email', 'user.firstName'])
+      .skip(paginationDto.skip ?? DEFAULT_SKIP)
+      .take(paginationDto.take ?? DEFAULT_PAGE_SIZE);
 
-        .skip(paginationDto.skip ?? DEFAULT_SKIP)
-        .take(paginationDto.take ?? DEFAULT_PAGE_SIZE)
+    if (queryDto?.published !== undefined) {
+      query.andWhere('post.published = :published', {
+        published: queryDto.published,
+      });
+    }
 
-        .getMany()
-    );
+    return query.getMany();
   }
 
   findOne(id: number) {
