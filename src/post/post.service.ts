@@ -42,9 +42,9 @@ export class PostService {
     return query.getMany();
   }
 
-  findOne(id: number) {
+  findOne(slug: string) {
     return this.postRepo.findOne({
-      where: { id },
+      where: { slug },
       relations: {
         user: true,
         tags: true,
