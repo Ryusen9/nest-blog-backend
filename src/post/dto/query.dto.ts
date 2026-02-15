@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsOptional } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class PostQueryDto {
   @Transform(({ value }: { value: unknown }) => {
@@ -11,4 +11,8 @@ export class PostQueryDto {
   @IsBoolean()
   @IsOptional()
   published?: boolean;
+
+  @IsString()
+  @IsOptional()
+  selectedTag?: string;
 }

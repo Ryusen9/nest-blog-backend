@@ -12,6 +12,8 @@ import { PostService } from './post.service';
 import { PaginationDto } from 'src/global-dto/pagination.dto';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { PostQueryDto } from './dto/query.dto';
+import { SortingDataDto } from './dto/sortingdata.dto';
 
 @Controller('post')
 export class PostController {
@@ -23,8 +25,12 @@ export class PostController {
   }
 
   @Get()
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.postService.findAll(paginationDto);
+  findAll(
+    @Query() paginationDto: PaginationDto,
+    @Query() queryDto: PostQueryDto,
+    @Query() sortingDataDto: SortingDataDto,
+  ) {
+    return this.postService.findAll(paginationDto, queryDto, sortingDataDto);
   }
 
   @Get('count')

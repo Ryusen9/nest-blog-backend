@@ -7,6 +7,7 @@ import { Post } from './entity/post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostQueryDto } from './dto/query.dto';
+import { SortingDataDto } from './dto/sortingdata.dto';
 
 @Injectable()
 export class PostService {
@@ -16,7 +17,20 @@ export class PostService {
     return this.postRepo.save(post);
   }
 
-  findAll(paginationDto: PaginationDto, queryDto?: PostQueryDto) {
+  findAll(
+    paginationDto: PaginationDto,
+    queryDto?: PostQueryDto,
+    sortingDataDto?: SortingDataDto,
+  ) {
+    const sortColumns: Record<string, string> = {
+      id: 'post.id',
+      slug: 'post.slug',
+      title: 'post.title',
+      published: 'post.published',
+      createdAt: 'post.createdAt',
+      updatedAt: 'post.updatedAt',
+    };
+
     const query = this.postRepo
       .createQueryBuilder('post')
       .leftJoin('post.user', 'user')
@@ -38,7 +52,21 @@ export class PostService {
         published: queryDto.published,
       });
     }
+    if (queryDto?.selectedTag) {
+      query.andWhere('tag.name = :tagName', { tagName: queryDto.selectedTag });
+    }
+    const sortBy = sortingDataDto?.sortBy;
+    const sortOrder = sortingDataDto?.sortOrder ?? 'DESC';
+    const sortColumn = sortBy ? sortColumns[sortBy] : undefined;
 
+    const typeOrmSortOrder: 'ASC' | 'DESC' =
+      sortOrder === 'ASC' ? 'ASC' : 'DESC';
+
+    if (sortColumn) {
+      query.orderBy(sortColumn, typeOrmSortOrder);
+    } else {
+      query.orderBy('post.createdAt', 'DESC');
+    }
     return query.getMany();
   }
 
