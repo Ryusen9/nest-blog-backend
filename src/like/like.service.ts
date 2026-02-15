@@ -16,6 +16,10 @@ export class LikeService {
     return this.likeRepo.find();
   }
 
+  likeCount() {
+    return this.likeRepo.count();
+  }
+
   findOne(id: number) {
     return this.likeRepo.findOne({
       where: { id },

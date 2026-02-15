@@ -27,6 +27,10 @@ export class UserService {
     return this.userRepo.find();
   }
 
+  userCount() {
+    return this.userRepo.count();
+  }
+
   findOne(id: number) {
     return this.userRepo.findOne({
       where: { id },

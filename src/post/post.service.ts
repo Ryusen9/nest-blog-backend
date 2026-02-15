@@ -54,6 +54,10 @@ export class PostService {
     });
   }
 
+  PostCount() {
+    return this.postRepo.count();
+  }
+
   update(id: number, updatePostDto: UpdatePostDto) {
     return this.postRepo.update(id, updatePostDto);
   }

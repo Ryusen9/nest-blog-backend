@@ -16,6 +16,11 @@ export class LikeController {
     return this.likeService.findAll();
   }
 
+  @Get('count')
+  count() {
+    return this.likeService.likeCount();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.likeService.findOne(+id);

@@ -19,6 +19,10 @@ export class CommentService {
     return this.commentRepo.find();
   }
 
+  commentCount() {
+    return this.commentRepo.count();
+  }
+
   findOne(id: number) {
     return this.commentRepo.findOne({
       where: { id },
