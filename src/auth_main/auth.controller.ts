@@ -4,10 +4,13 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Request,
+  Req,
+  Res,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/signin.dto';
+import type { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -19,10 +22,56 @@ export class AuthController {
   */
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  async login(@Body() signinDto: SignInDto) {
-    return await this.authService.validateUser(
+  async login(
+    @Body() signinDto: SignInDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const result = await this.authService.validateUser(
       signinDto.email,
       signinDto.password,
     );
+    // Set the refresh token in an httpOnly cookie for rotation flow.
+    response.cookie('refresh_token', result.refreshToken, this.refreshCookie());
+    return { id: result.id, access_token: result.accessToken };
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('refresh')
+  async refresh(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const refreshToken = request.cookies?.refresh_token as string | undefined;
+    if (!refreshToken) {
+      throw new UnauthorizedException('Missing refresh token');
+    }
+    const result = await this.authService.refreshTokens(refreshToken);
+    // Rotate the refresh token on every refresh.
+    response.cookie('refresh_token', result.refreshToken, this.refreshCookie());
+    return { id: result.id, access_token: result.accessToken };
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('logout')
+  async logout(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const refreshToken = request.cookies?.refresh_token as string | undefined;
+    if (refreshToken) {
+      // Validate and revoke refresh token without rotation.
+      await this.authService.revokeRefreshToken(refreshToken);
+    }
+    response.clearCookie('refresh_token', this.refreshCookie());
+    return { message: 'Logged out' };
+  }
+
+  private refreshCookie() {
+    return {
+      httpOnly: true,
+      sameSite: 'lax' as const,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    };
   }
 }

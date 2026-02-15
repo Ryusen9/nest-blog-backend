@@ -38,8 +38,9 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
-  hashedRefreshToken: string;
+  // Refresh token hash is stored only while a session is active.
+  @Column({ nullable: true })
+  hashedRefreshToken?: string;
 
   @OneToMany(() => Post, (post) => post.user, { cascade: true })
   posts: Post[];

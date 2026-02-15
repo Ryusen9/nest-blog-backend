@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entity/user.entity';
-import { compare } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -16,6 +16,26 @@ export class UserService {
       encrypted: string,
     ) => Promise<boolean>;
     return comparePasswordsFn(plainText, hashed);
+  }
+
+  async findById(id: number) {
+    return this.userRepo.findOne({ where: { id } });
+  }
+
+  async setCurrentRefreshToken(userId: number, refreshToken: string) {
+    // Store only a hashed refresh token to reduce credential leakage risk.
+    const hashed = await hash(refreshToken, 10);
+    await this.userRepo.update(userId, { hashedRefreshToken: hashed });
+  }
+
+  async removeRefreshToken(userId: number) {
+    await this.userRepo.update(userId, { hashedRefreshToken: undefined });
+  }
+
+  async isRefreshTokenValid(userId: number, refreshToken: string) {
+    const user = await this.findById(userId);
+    if (!user?.hashedRefreshToken) return false;
+    return compare(refreshToken, user.hashedRefreshToken);
   }
 
   async create(createUserDto: CreateUserDto) {

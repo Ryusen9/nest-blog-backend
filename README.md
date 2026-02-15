@@ -25,6 +25,37 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+## Auth (JWT Access + Refresh)
+
+This project uses short-lived access tokens and rotating refresh tokens stored in an httpOnly cookie.
+
+### Login
+
+```bash
+curl -i -X POST http://localhost:3000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"password123"}'
+```
+
+### Refresh (uses the cookie set on login)
+
+```bash
+curl -i -X POST http://localhost:3000/auth/refresh \
+  --cookie "refresh_token=YOUR_REFRESH_COOKIE_VALUE"
+```
+
+### Logout
+
+```bash
+curl -i -X POST http://localhost:3000/auth/logout \
+  --cookie "refresh_token=YOUR_REFRESH_COOKIE_VALUE"
+```
+
+Notes:
+
+- Frontend requests must include credentials (for example, `fetch(..., { credentials: 'include' })`).
+- Required env vars: `JWT_SECRET`, `JWT_REFRESH_SECRET`.
+
 ## Project setup
 
 ```bash
