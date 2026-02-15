@@ -1,17 +1,21 @@
 import { JwtService } from '@nestjs/jwt';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
+import refreshJwtConfig from './config/refresh-jwt.config';
+import type { ConfigType } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
+    @Inject(refreshJwtConfig.KEY)
+    private refreshTokenConfig: ConfigType<typeof refreshJwtConfig>,
   ) {}
   async validateUser(
     email: string,
     password: string,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ id: number; access_token: string; refresh_token: string }> {
     const user = await this.userService.findByEmail(email);
     if (!user) throw new UnauthorizedException('User not found');
     const isPasswordValid = await this.userService.comparePasswords(
@@ -20,10 +24,12 @@ export class AuthService {
     );
     if (!isPasswordValid) throw new UnauthorizedException('Invalid password');
     const payload = { sub: user.id, email: user.email };
+    const token = this.jwtService.sign(payload);
+    const refreshToken = this.jwtService.sign(payload, this.refreshTokenConfig);
     return {
-      // 💡 Here the JWT secret key that's used for signing the payload
-      // is the key that was passsed in the JwtModule
-      access_token: await this.jwtService.signAsync(payload),
+      id: user.id,
+      access_token: token,
+      refresh_token: refreshToken,
     };
   }
 }

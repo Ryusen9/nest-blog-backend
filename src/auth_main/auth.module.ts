@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { UserModule } from 'src/user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import refreshJwtConfig from './config/refresh-jwt.config';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       to avoid duplicate instances and ensure a single repository context.
     */
     UserModule,
+    ConfigModule.forFeature(refreshJwtConfig),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
