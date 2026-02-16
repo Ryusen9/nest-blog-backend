@@ -1,3 +1,15 @@
+/**
+ * On any controller or route that should require a logged-in user.
+Typically as a decorator: @UseGuards(AuthGuard) on controllers or specific handlers.
+
+
+Why use it
+
+-> Centralizes auth checks so you don’t repeat token verification in every controller.
+-> Ensures only valid JWTs reach protected business logic.
+-> Makes user info (request.user) available for downstream authorization checks.
+ */
+
 import {
   CanActivate,
   ExecutionContext,
