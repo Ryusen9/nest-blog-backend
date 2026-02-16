@@ -25,7 +25,7 @@ import refreshJwtConfig from './config/refresh-jwt.config';
         return {
           global: true,
           secret,
-          signOptions: { expiresIn: '12h' },
+          signOptions: { expiresIn: '1h' },
         };
       },
     }),
