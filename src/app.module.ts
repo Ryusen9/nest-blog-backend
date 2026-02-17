@@ -25,6 +25,9 @@ import { AuthModule } from './auth_main/auth.module';
         type: 'postgres',
         url: configService.get<string>('DB_URL'),
         port: configService.get<number>('DB_PORT'),
+        ssl: {
+          rejectUnauthorized: false,
+        },
         synchronize: true,
         autoLoadEntities: true,
         entities: [path.join(__dirname, '**', '*.entity.{ts,js}')],

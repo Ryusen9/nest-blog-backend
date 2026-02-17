@@ -1,16 +1,20 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
   Req,
   Res,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/signin.dto';
 import type { Request, Response } from 'express';
+import type { RequestWithUser } from './auth-guard/auth.guard';
+import { AuthGuard } from './auth-guard/auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -33,6 +37,14 @@ export class AuthController {
     // Set the refresh token in an httpOnly cookie for rotation flow.
     response.cookie('refresh_token', result.refreshToken, this.refreshCookie());
     return { id: result.id, access_token: result.accessToken };
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('me')
+  async me(@Req() request: RequestWithUser) {
+    const userId = request.user?.sub;
+    if (!userId) throw new UnauthorizedException('User not authenticated');
+    return this.authService.me(userId);
   }
 
   @HttpCode(HttpStatus.OK)

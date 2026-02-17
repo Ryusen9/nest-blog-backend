@@ -3,6 +3,7 @@ import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import refreshJwtConfig from './config/refresh-jwt.config';
 import type { ConfigType } from '@nestjs/config';
+import { first } from 'rxjs';
 
 type JwtPayload = {
   sub: number;
@@ -72,6 +73,20 @@ export class AuthService {
     const accessToken = this.jwtService.sign(payload);
     const refreshToken = this.jwtService.sign(payload, this.refreshTokenConfig);
     return { accessToken, refreshToken };
+  }
+
+  async me(userId: number) {
+    const user = await this.userService.findById(userId);
+    if (!user) throw new UnauthorizedException('User not found');
+    return {
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      bio: user.bio,
+      role: user.role,
+      avatarUrl: user.avatarUrl,
+    };
   }
 
   private async verifyRefreshToken(refreshToken: string) {
