@@ -2,6 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,6 +22,13 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  const config = new DocumentBuilder()
+    .setTitle('Nest Blog API')
+    .setDescription('API documentation for the Nest Blog application')
+    .setVersion('1.0')
+    .build();
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api-docs', app, documentFactory());
   const port = Number(process.env.MAIN_PORT ?? 3000);
   await app.listen(port);
 }
