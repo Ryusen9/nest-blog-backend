@@ -10,6 +10,8 @@ import { LikeModule } from './like/like.module';
 import { CommentModule } from './comment/comment.module';
 import path from 'path';
 import { AuthModule } from './auth_main/auth.module';
+import { FileUploadModule } from './file-upload/file-upload.module';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -34,12 +36,16 @@ import { AuthModule } from './auth_main/auth.module';
         logging: true,
       }),
     }),
+    MulterModule.register({
+      dest: './file-upload',
+    }),
     UserModule,
     PostModule,
     TagModule,
     LikeModule,
     CommentModule,
     AuthModule,
+    FileUploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],
