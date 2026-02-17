@@ -3,8 +3,6 @@ import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import refreshJwtConfig from './config/refresh-jwt.config';
 import type { ConfigType } from '@nestjs/config';
-import { first } from 'rxjs';
-
 type JwtPayload = {
   sub: number;
   email: string;
