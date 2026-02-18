@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { v2, UploadApiResponse, UploadApiErrorResponse } from 'cloudinary';
 @Injectable()
 export class FileUploadService {
@@ -13,20 +13,29 @@ export class FileUploadService {
   async uploadImage(
     filePath: string,
   ): Promise<UploadApiResponse | UploadApiErrorResponse> {
+    if (!filePath) {
+      throw new InternalServerErrorException('File path is required');
+    }
+
     try {
-      return new Promise((resolve, reject) => {
-        v2.uploader.upload(
-          filePath,
-          { folder: 'blog-images' },
-          (error, result) => {
-            if (error) return reject(error);
-            if (!result) return reject(new Error('Cloudinary upload failed'));
-            resolve(result);
-          },
-        );
+      const result = await v2.uploader.upload(filePath, {
+        folder: 'blog-images',
       });
+      return result;
     } catch (error) {
-      throw error;
+      console.error('Cloudinary upload error:', error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'object' &&
+              error !== null &&
+              'message' in error &&
+              typeof (error as { message: unknown }).message === 'string'
+            ? (error as { message: string }).message
+            : 'Unknown error occurred';
+      throw new InternalServerErrorException(
+        `Cloudinary upload failed: ${errorMessage}`,
+      );
     }
   }
 }
