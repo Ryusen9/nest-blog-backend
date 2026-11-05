@@ -24,11 +24,39 @@ async function bootstrap() {
   );
   const config = new DocumentBuilder()
     .setTitle('Nest Blog API')
-    .setDescription('API documentation for the Nest Blog application')
+    .setDescription(
+      'HTTP API for the Nest Blog application. Request bodies are validated and unknown fields are stripped. Send the access token as Authorization: Bearer <access_token>. Login and refresh set an httpOnly refresh_token cookie; send that cookie to POST /auth/refresh and POST /auth/logout. Realtime messages use Socket.IO (client event newMessage, server event onMessage) and are not HTTP routes.',
+    )
     .setVersion('1.0')
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+      description:
+        'JWT access token returned by POST /auth/login or POST /auth/refresh.',
+    })
+    .addCookieAuth('refresh_token', {
+      type: 'apiKey',
+      in: 'cookie',
+      name: 'refresh_token',
+      description:
+        'httpOnly cookie set by login and replaced on each refresh. Required by POST /auth/refresh.',
+    })
+    .addTag('App', 'Welcome message')
+    .addTag('Auth', 'Login, current user, refresh, and logout')
+    .addTag('User', 'User accounts')
+    .addTag('Post', 'Blog posts')
+    .addTag('Comment', 'Comments')
+    .addTag('Like', 'Likes')
+    .addTag('Tag', 'Tags')
+    .addTag('File Upload', 'Image uploads to Cloudinary')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api-docs', app, documentFactory());
+  SwaggerModule.setup('api-docs', app, documentFactory(), {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
   const port = Number(process.env.MAIN_PORT ?? 3000);
   await app.listen(port);
 }

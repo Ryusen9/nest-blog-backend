@@ -12,6 +12,7 @@ import path from 'path';
 import { AuthModule } from './auth_main/auth.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
 import { MulterModule } from '@nestjs/platform-express';
+import { GatewayModule } from './gateway/gateway.module';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { MulterModule } from '@nestjs/platform-express';
         ssl: {
           rejectUnauthorized: false,
         },
-        synchronize: true,
+        synchronize: false,
         autoLoadEntities: true,
         entities: [path.join(__dirname, '**', '*.entity.{ts,js}')],
         logging: true,
@@ -46,6 +47,7 @@ import { MulterModule } from '@nestjs/platform-express';
     CommentModule,
     AuthModule,
     FileUploadModule,
+    GatewayModule,
   ],
   controllers: [AppController],
   providers: [AppService],
