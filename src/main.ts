@@ -10,6 +10,7 @@ async function bootstrap() {
     origin: [
       'http://localhost:3000',
       'https://nest-blog-frontend.vercel.app/',
+      'https://nest-blog-frontend-jade.vercel.app/',
       'http://192.168.0.198:3000',
     ],
     credentials: true,
