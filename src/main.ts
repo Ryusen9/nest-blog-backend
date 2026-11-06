@@ -9,10 +9,12 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:3000',
-      'https://nest-blog-frontend.vercel.app/',
-      'https://nest-blog-frontend-jade.vercel.app/',
+      'https://nest-blog-frontend.vercel.app',
+      'https://nest-blog-frontend-jade.vercel.app',
       'http://192.168.0.198:3000',
     ],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   });
   // Enable cookie parsing for refresh token httpOnly cookies.
@@ -58,7 +60,7 @@ async function bootstrap() {
       persistAuthorization: true,
     },
   });
-  const port = Number(process.env.MAIN_PORT ?? 3000);
-  await app.listen(port);
+  const port = Number(process.env.PORT ?? process.env.MAIN_PORT ?? 3000);
+  await app.listen(port, '0.0.0.0'); // listen on all interfaces
 }
 void bootstrap();
